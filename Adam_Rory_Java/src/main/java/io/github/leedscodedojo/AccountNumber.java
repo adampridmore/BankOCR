@@ -61,7 +61,7 @@ public class AccountNumber {
     }
 
     public boolean isChecksumValid() {
-        List<Integer> accountDigits = accountNumberTestToDigits(accountNumberText);
+        List<Integer> accountDigits = accountNumberTextToDigits();
 
         int checkSum = 0;
         int digitIndex = 0;
@@ -73,30 +73,26 @@ public class AccountNumber {
         return checkSum % 11 == 0;
     }
 
-    private List<Integer> accountNumberTestToDigits(String accountNumber) {
+    private List<Integer> accountNumberTextToDigits() {
         List<Integer> accountDigits = new ArrayList<Integer>();
-        char[] chars = accountNumber.toCharArray();
+        char[] chars = accountNumberText.toCharArray();
         for (char c : chars) {
-            if (Character.isDigit(c)) {
-                int digit = Integer.parseInt(Character.toString(c));
-                accountDigits.add(digit);
-            } else {
-                accountDigits.add(null);
-            }
+            int digit = Integer.parseInt(Character.toString(c));
+            accountDigits.add(digit);
         }
         return accountDigits;
     }
 
-    private boolean isLegalAccountNumber() {
+    private boolean hasIllegalDigits() {
         if (accountNumberText.contains("?")){
-            return false;
-        }else {
             return true;
+        }else {
+            return false;
         }
     }
 
     public String getAccountNumberTextWithStatus() {
-        if (!isLegalAccountNumber()){
+        if (hasIllegalDigits()){
             return String.format("%s ILL", accountNumberText);
         }
 

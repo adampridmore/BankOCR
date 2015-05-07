@@ -4,53 +4,53 @@ public class OcrCharacter {
 
     private static final String ZERO =
             " _ \n" +
-                    "| |\n" +
-                    "|_|\n";
+            "| |\n" +
+            "|_|\n";
 
     private static final String ONE =
             "   \n" +
-                    "  |\n" +
-                    "  |\n";
+            "  |\n" +
+            "  |\n";
 
     private static final String TWO =
             " _ \n" +
-                    " _|\n" +
-                    "|_ \n";
+            " _|\n" +
+            "|_ \n";
 
     private static final String THREE =
             " _ \n" +
-                    " _|\n" +
-                    " _|\n";
+            " _|\n" +
+            " _|\n";
 
     private static final String FOUR =
             "   \n" +
-                    "|_|\n" +
-                    "  |\n";
+            "|_|\n" +
+            "  |\n";
 
     private static final String FIVE =
             " _ \n" +
-                    "|_ \n" +
-                    " _|\n";
+            "|_ \n" +
+            " _|\n";
 
     private static final String SIX =
             " _ \n" +
-                    "|_ \n" +
-                    "|_|\n";
+            "|_ \n" +
+            "|_|\n";
 
     private static final String SEVEN =
             " _ \n" +
-                    "  |\n" +
-                    "  |\n";
+            "  |\n" +
+            "  |\n";
 
     private static final String EIGHT =
             " _ \n" +
-                    "|_|\n" +
-                    "|_|\n";
+            "|_|\n" +
+            "|_|\n";
 
     private static final String NINE =
             " _ \n" +
-                    "|_|\n" +
-                    " _|\n";
+            "|_|\n" +
+            " _|\n";
 
     public static String parseSingleOcrCharacter(String characterToScan) {
         if (characterToScan.equals(ZERO)) {
