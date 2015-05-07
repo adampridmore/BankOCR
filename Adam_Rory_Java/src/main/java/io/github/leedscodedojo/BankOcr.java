@@ -1,55 +1,58 @@
 package io.github.leedscodedojo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BankOcr {
     private static final String ZERO =
             " _ \n" +
-            "| |\n" +
-            "|_|\n";
+                    "| |\n" +
+                    "|_|\n";
 
     private static final String ONE =
             "   \n" +
-            "  |\n" +
-            "  |\n";
+                    "  |\n" +
+                    "  |\n";
 
     private static final String TWO =
             " _ \n" +
-            " _|\n" +
-            "|_ \n";
+                    " _|\n" +
+                    "|_ \n";
 
     private static final String THREE =
             " _ \n" +
-            " _|\n" +
-            " _|\n";
+                    " _|\n" +
+                    " _|\n";
 
     private static final String FOUR =
             "   \n" +
-            "|_|\n" +
-            "  |\n";
+                    "|_|\n" +
+                    "  |\n";
 
     private static final String FIVE =
             " _ \n" +
-            "|_ \n" +
-            " _|\n";
+                    "|_ \n" +
+                    " _|\n";
 
     private static final String SIX =
             " _ \n" +
-            "|_ \n" +
-            "|_|\n";
+                    "|_ \n" +
+                    "|_|\n";
 
     private static final String SEVEN =
             " _ \n" +
-            "  |\n" +
-            "  |\n";
+                    "  |\n" +
+                    "  |\n";
 
     private static final String EIGHT =
             " _ \n" +
-            "|_|\n" +
-            "|_|\n";
+                    "|_|\n" +
+                    "|_|\n";
 
     private static final String NINE =
             " _ \n" +
-            "|_|\n" +
-            " _|\n";
+                    "|_|\n" +
+                    " _|\n";
 
     public String parseSingleOcrCharacter(String characterToScan) {
         if (characterToScan.equals(ZERO)) {
@@ -127,6 +130,53 @@ public class BankOcr {
 
         if (lines[0].length() != lines[1].length() || lines[1].length() != lines[2].length()) {
             throw new RuntimeException("Lines are different lengths: " + textToScan);
+        }
+    }
+
+    public boolean isValidChecksumAccountNumber(String accountNumber) {
+        List<Integer> accountDigits = accountNumberTestToDigits(accountNumber);
+
+        int checkSum = 0;
+        int digitIndex = 0;
+        for (Integer digit : accountDigits) {
+            checkSum += (9 - digitIndex) * digit;
+            digitIndex++;
+        }
+
+        return checkSum % 11 == 0;
+    }
+
+    private List<Integer> accountNumberTestToDigits(String accountNumber) {
+        List<Integer> accountDigits = new ArrayList<Integer>();
+        char[] chars = accountNumber.toCharArray();
+        for (char c : chars) {
+            if (Character.isDigit(c)) {
+                int digit = Integer.parseInt(Character.toString(c));
+                accountDigits.add(digit);
+            } else {
+                accountDigits.add(null);
+            }
+        }
+        return accountDigits;
+    }
+
+    public String read2(String accountNumber) {
+        if (!isLegalAccountNumber(accountNumber)){
+            return String.format("%s ILL", accountNumber);
+        }
+
+        if (isValidChecksumAccountNumber(accountNumber)) {
+            return accountNumber;
+        } else {
+            return String.format("%s ERR", accountNumber);
+        }
+    }
+
+    private boolean isLegalAccountNumber(String accountNumber) {
+        if (accountNumber.contains("?")){
+            return false;
+        }else {
+            return true;
         }
     }
 }

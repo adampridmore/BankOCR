@@ -3,6 +3,7 @@ package io.github.leedscodedojo;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -17,7 +18,7 @@ public class BankOcrTest {
         BankOcr bankOcr = new BankOcr();
         String actualNumber = bankOcr.read(textToScan);
 
-        assertEquals("12", actualNumber);
+        assertThat(actualNumber, is("12"));
     }
 
     @Test
@@ -30,7 +31,7 @@ public class BankOcrTest {
         BankOcr bankOcr = new BankOcr();
         String actualNumber = bankOcr.read(textToScan);
 
-        assertEquals("1234", actualNumber);
+        assertThat(actualNumber, is("1234"));
     }
 
     @Test
@@ -43,7 +44,7 @@ public class BankOcrTest {
         BankOcr bankOcr = new BankOcr();
         String actualNumber = bankOcr.read(textToScan);
 
-        assertEquals("0123456789", actualNumber);
+        assertThat(actualNumber, is("0123456789"));
     }
     @Test
     public void single_line_is_invalid() {
@@ -95,6 +96,36 @@ public class BankOcrTest {
         BankOcr bankOcr = new BankOcr();
         String actualNumber = bankOcr.read(textToScan);
 
-        assertEquals("?", actualNumber);
+        assertThat(actualNumber, is("?"));
+    }
+
+    @Test
+    public void validate_account_number_for_valid_account(){
+        BankOcr bankOcr = new BankOcr();
+        assertThat(bankOcr.isValidChecksumAccountNumber("345882865"), is(true));
+    }
+
+    @Test
+    public void validate_account_number_for_invalid_account(){
+        BankOcr bankOcr = new BankOcr();
+        assertThat(bankOcr.isValidChecksumAccountNumber("245882865"), is(false));
+    }
+
+    @Test
+    public void parse_account_with_validation_for_valid_account(){
+        BankOcr bankOcr = new BankOcr();
+        assertThat(bankOcr.read2("457508000"), is("457508000"));
+    }
+
+    @Test
+    public void parse_account_with_validation_for_invalid_account(){
+        BankOcr bankOcr = new BankOcr();
+        assertThat(bankOcr.read2("664371495"), is("664371495 ERR"));
+    }
+
+    @Test
+    public void parse_account_with_validation_for_account_with_invalid_characters(){
+        BankOcr bankOcr = new BankOcr();
+        assertThat(bankOcr.read2("86110??36"), is("86110??36 ILL"));
     }
 }
