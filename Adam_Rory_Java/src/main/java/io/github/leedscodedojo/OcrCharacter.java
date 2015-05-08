@@ -1,5 +1,8 @@
 package io.github.leedscodedojo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class OcrCharacter {
 
     private static final String ZERO =
@@ -87,5 +90,49 @@ public class OcrCharacter {
         System.out.println(String.format("Unknown character:%n%s", characterToScan));
 
         return "?";
+    }
+
+    public static List<String> getAlternativeOcrCharacters(String ocrCharacters) {
+        ArrayList<String> alternatives = new ArrayList<String>();
+        for(int y = 0 ; y < 3 ; y++){
+            for(int x = 0 ; x < 3 ; x++){
+                alternatives.addAll(toggleOcrSegment(ocrCharacters, x,y));
+            }
+        }
+
+        return alternatives;
+    }
+
+    public static List<String> toggleOcrSegment(String ocrCharacter, int x, int y) {
+        char[] originalChars = ocrCharacter.toCharArray();
+
+        char[] allSegments = new char[]{' ','|', '_'};
+
+        ArrayList<String> alternativeSegments = new ArrayList<String>();
+
+        for(char c : allSegments){
+            if (originalChars[y * 4 + x] != c){
+                char[] newChars = ocrCharacter.toCharArray();
+                newChars[y * 4 + x] = c;
+
+                alternativeSegments.add(new String(newChars));
+            }
+        }
+
+        return alternativeSegments;
+    }
+
+    public static List<String> getValidAlternativeDigits(String ocrCharacters) {
+        ArrayList<String> alternativeValidDigits = new ArrayList<String>();
+
+        List<String> alternativeOcrCharacters = getAlternativeOcrCharacters(ocrCharacters);
+        for(String alternativeOcrCharacter : alternativeOcrCharacters){
+            String scannedDigit = parseSingleOcrCharacter(alternativeOcrCharacter);
+            if (!scannedDigit.equals("?")){
+                alternativeValidDigits.add(scannedDigit);
+            }
+        };
+
+        return alternativeValidDigits;
     }
 }

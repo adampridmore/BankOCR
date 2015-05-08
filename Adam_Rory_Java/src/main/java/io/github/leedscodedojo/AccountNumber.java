@@ -29,11 +29,25 @@ public class AccountNumber {
                     lines[1].substring(i, i + 3),
                     lines[2].substring(i, i + 3));
 
-            String parsedCharacter = OcrCharacter.parseSingleOcrCharacter(ocrCharacter);
+            String parsedCharacter = parseOcrCharacter(ocrCharacter);
+
             scannedCharacters.append(parsedCharacter);
         }
 
         return new AccountNumber(scannedCharacters.toString());
+    }
+
+    private static String parseOcrCharacter(String ocrCharacter) {
+        String parsedCharacter = OcrCharacter.parseSingleOcrCharacter(ocrCharacter);
+
+        if (parsedCharacter.equals("?")){
+            List<String> alternativeOcrCharacters = OcrCharacter.getValidAlternativeDigits(ocrCharacter);
+            if (alternativeOcrCharacters.size() == 1){
+                return alternativeOcrCharacters.get(0);
+            }
+        }
+
+        return parsedCharacter;
     }
 
     private static String createOcrCharacterFromThreeLines(String line1, String line2, String line3) {

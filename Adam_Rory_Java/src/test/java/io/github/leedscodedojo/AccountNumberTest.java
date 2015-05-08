@@ -120,4 +120,15 @@ public class AccountNumberTest {
         AccountNumber accountNumber = AccountNumber.createFromAccountNumberText("86110??36");
         assertThat(accountNumber.getAccountNumberTextWithStatus(), is("86110??36 ILL"));
     }
+
+    @Test
+    public void can_parse_12_with_invalid_digits() {
+        String textToScan =
+                "    _ \n" +
+                "    _|\n" +
+                "  ||_ \n";
+
+        AccountNumber accountNumber = AccountNumber.createFromOcrString(textToScan);
+        assertThat(accountNumber.getAccountNumberText(), is("12"));
+    }
 }
