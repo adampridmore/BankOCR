@@ -19,59 +19,21 @@ public class AccountNumber {
     }
 
     public static AccountNumber createFromOcrString(String ocrText) {
-        String[] lines = getLines(ocrText);
+        return createFromOcrString(new OcrText(ocrText));
+    }
+
+    public static AccountNumber createFromOcrString(OcrText ocrText) {
+        List<OcrCharacter> ocrCharacters = ocrText.readOcrCharacters();
 
         StringBuilder scannedCharacters = new StringBuilder();
 
-        for (int i = 0; i < lines[0].length(); i += 3) {
-            String ocrCharacter = createOcrCharacterFromThreeLines(
-                    lines[0].substring(i, i + 3),
-                    lines[1].substring(i, i + 3),
-                    lines[2].substring(i, i + 3));
-
-            String parsedCharacter = parseOcrCharacter(ocrCharacter);
-
-            scannedCharacters.append(parsedCharacter);
+        for(OcrCharacter ocrCharacter : ocrCharacters){
+            ParsedOcrCharacter parsedOcrCharacter = ocrCharacter.parse();
+            String accountNumberCharacter = parsedOcrCharacter.getCharacter();
+            scannedCharacters.append(accountNumberCharacter);
         }
 
         return new AccountNumber(scannedCharacters.toString());
-    }
-
-    private static String parseOcrCharacter(String ocrCharacter) {
-        String parsedCharacter = OcrCharacter.parseSingleOcrCharacter(ocrCharacter);
-
-        if (parsedCharacter.equals("?")){
-            List<String> alternativeOcrCharacters = OcrCharacter.getValidAlternativeDigits(ocrCharacter);
-            if (alternativeOcrCharacters.size() == 1){
-                return alternativeOcrCharacters.get(0);
-            }
-        }
-
-        return parsedCharacter;
-    }
-
-    private static String createOcrCharacterFromThreeLines(String line1, String line2, String line3) {
-        return String.format("%s\n%s\n%s\n", line1, line2, line3);
-    }
-
-    private static String[] getLines(String textToScan) {
-        String[] lines = textToScan.split("\n");
-        assertLines(textToScan, lines);
-        return lines;
-    }
-
-    private static void assertLines(String textToScan, String[] lines) {
-        if (lines.length != 3) {
-            throw new RuntimeException("Incorrect number of lines in: " + textToScan);
-        }
-
-        if (lines[0].length() % 3 != 0) {
-            throw new RuntimeException("Lines lengths must be a multiple of three: " + textToScan);
-        }
-
-        if (lines[0].length() != lines[1].length() || lines[1].length() != lines[2].length()) {
-            throw new RuntimeException("Lines are different lengths: " + textToScan);
-        }
     }
 
     public boolean isChecksumValid() {

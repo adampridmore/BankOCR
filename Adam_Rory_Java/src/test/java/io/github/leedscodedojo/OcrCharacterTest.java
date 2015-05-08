@@ -13,7 +13,7 @@ public class OcrCharacterTest {
         String ocrCharacters =  "   \n" +
                                 "   \n" +
                                 "   \n";
-        List<String> alternativeCharacters = OcrCharacter.getAlternativeOcrCharacters(ocrCharacters);
+        List<String> alternativeCharacters = ParsedOcrCharacter.getAlternativeOcrCharacters(ocrCharacters);
 
         assertThat(alternativeCharacters.size(),is(18));
 
@@ -30,10 +30,10 @@ public class OcrCharacterTest {
                 "   \n" +
                 "  |\n" +
                 "   \n";
-        List<String> alternativeDigits = OcrCharacter.getValidAlternativeDigits(ocrCharacters);
+        List<ParsedOcrCharacter> alternativeDigits = ParsedOcrCharacter.getValidAlternativeDigits(ocrCharacters);
 
         assertThat(alternativeDigits.size(),is(1));
-        assertThat(alternativeDigits.get(0), is("1"));
+        assertThat(alternativeDigits.get(0).getCharacter(), is("1"));
     }
 
     @Test
@@ -42,7 +42,7 @@ public class OcrCharacterTest {
                 "   \n" +
                 "   \n" +
                 "   \n";
-        List<String> toggledOcrCharacters = OcrCharacter.toggleOcrSegment(ocrCharacter, 0,0);
+        List<String> toggledOcrCharacters = ParsedOcrCharacter.toggleOcrSegment(ocrCharacter, 0, 0);
 
         String expectedCharacter1 =
                 "|  \n" +
@@ -62,17 +62,12 @@ public class OcrCharacterTest {
                 "   \n" +
                 "   \n" +
                 "   \n";
-        List<String> toggledOcrCharacters = OcrCharacter.toggleOcrSegment(ocrCharacter, 1,2);
+        List<String> toggledOcrCharacters = ParsedOcrCharacter.toggleOcrSegment(ocrCharacter, 1, 2);
 
         String expectedCharacter =
                 "   \n" +
                 "   \n" +
                 " | \n";
         assertThat(toggledOcrCharacters.get(0), is(expectedCharacter));
-    }
-
-    @Test
-    public void scratch(){
-
     }
 }
