@@ -131,4 +131,26 @@ public class AccountNumberTest {
         AccountNumber accountNumber = AccountNumber.createFromOcrString(textToScan);
         assertThat(accountNumber.getAccountNumberText(), is("12"));
     }
+
+    @Test
+    public void can_parse_with_invalid_scan() {
+        String textToScan =
+                " _    \n" +
+                " _| _|\n" +
+                "|_  _|\n";
+
+        AccountNumber accountNumber = AccountNumber.createFromOcrString(textToScan);
+        assertThat(accountNumber.getAccountNumberText(), is("23"));
+    }
+
+    @Test
+    public void ambiguous_scan() {
+        String textToScan =
+                " _ \n" +
+                "  |\n" +
+                " _|\n";
+
+        AccountNumber accountNumber = AccountNumber.createFromOcrString(textToScan);
+        assertThat(accountNumber.getAccountNumberTextWithStatus(), is("? AMB"));
+    }
 }

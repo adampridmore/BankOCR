@@ -40,7 +40,7 @@ public class OcrText {
             String line2 = lines[1].substring(i, i + 3);
             String line3 = lines[2].substring(i, i + 3);
 
-            String ocrBlockText =  createOcrCharacterFromThreeLines(line1, line2,line3);
+            String ocrBlockText = createOcrCharacterFromThreeLines(line1, line2,line3);
             blocks.add(new OcrCharacter(ocrBlockText));
         }
 

@@ -6,6 +6,9 @@ import java.util.List;
 public class ParsedOcrCharacter {
     private String character;
 
+    public final static String UNKNOWN = "?";
+    private boolean ambiguous = false;
+
     public ParsedOcrCharacter(String character) {
         this.character = character;
     }
@@ -98,7 +101,7 @@ public class ParsedOcrCharacter {
 
         System.out.println(String.format("Unknown character:%n%s", characterToScan));
 
-        return new ParsedOcrCharacter("?");
+        return new ParsedOcrCharacter(UNKNOWN);
     }
 
     public static List<String> getAlternativeOcrCharacters(String ocrCharacters) {
@@ -146,6 +149,14 @@ public class ParsedOcrCharacter {
     }
 
     public boolean isUnknownCharacter() {
-        return (getCharacter().equals("?"));
+        return (getCharacter().equals(UNKNOWN));
+    }
+
+    public boolean isAmbiguous() {
+        return ambiguous;
+    }
+
+    public void setAmbiguous(boolean ambiguous) {
+        this.ambiguous = ambiguous;
     }
 }

@@ -4,14 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AccountNumber {
-    public String getAccountNumberText() {
-        return accountNumberText;
-    }
-
-    private String accountNumberText;
+    private List<ParsedOcrCharacter> parsedOcrCharacters = new ArrayList<ParsedOcrCharacter>();
 
     private AccountNumber(String accountNumberText) {
-        this.accountNumberText = accountNumberText;
+        for(char c : accountNumberText.toCharArray()){
+            ParsedOcrCharacter parsedOcrCharacter = new ParsedOcrCharacter(Character.toString(c));
+            parsedOcrCharacters.add(parsedOcrCharacter);
+        }
+    }
+
+    private AccountNumber(List<ParsedOcrCharacter> parsedOcrCharacters){
+        this.parsedOcrCharacters = new ArrayList<ParsedOcrCharacter>(parsedOcrCharacters);
+    }
+
+    public String getAccountNumberText(){
+        StringBuilder sb = new StringBuilder();
+        for(ParsedOcrCharacter parsedOcrCharacter : parsedOcrCharacters){
+            sb.append(parsedOcrCharacter.getCharacter());
+        }
+        return sb.toString();
     }
 
     public static AccountNumber createFromAccountNumberText(String accountNumberText) {
@@ -25,15 +36,13 @@ public class AccountNumber {
     public static AccountNumber createFromOcrString(OcrText ocrText) {
         List<OcrCharacter> ocrCharacters = ocrText.readOcrCharacters();
 
-        StringBuilder scannedCharacters = new StringBuilder();
+        List<ParsedOcrCharacter> parsedOcrCharacters = new ArrayList<ParsedOcrCharacter>();
 
         for(OcrCharacter ocrCharacter : ocrCharacters){
-            ParsedOcrCharacter parsedOcrCharacter = ocrCharacter.parse();
-            String accountNumberCharacter = parsedOcrCharacter.getCharacter();
-            scannedCharacters.append(accountNumberCharacter);
+            parsedOcrCharacters.add(ocrCharacter.parse());
         }
 
-        return new AccountNumber(scannedCharacters.toString());
+        return new AccountNumber(parsedOcrCharacters);
     }
 
     public boolean isChecksumValid() {
@@ -51,7 +60,7 @@ public class AccountNumber {
 
     private List<Integer> accountNumberTextToDigits() {
         List<Integer> accountDigits = new ArrayList<Integer>();
-        char[] chars = accountNumberText.toCharArray();
+        char[] chars = getAccountNumberText().toCharArray();
         for (char c : chars) {
             int digit = Integer.parseInt(Character.toString(c));
             accountDigits.add(digit);
@@ -60,22 +69,36 @@ public class AccountNumber {
     }
 
     private boolean hasIllegalDigits() {
-        if (accountNumberText.contains("?")){
-            return true;
-        }else {
-            return false;
+        for(ParsedOcrCharacter parsedOcrCharacter : parsedOcrCharacters){
+            if (parsedOcrCharacter.isUnknownCharacter()) {
+                return true;
+            }
         }
+        return false;
+    }
+
+    private boolean hasAmbiguosDigits() {
+        for(ParsedOcrCharacter parsedOcrCharacter : parsedOcrCharacters){
+            if (parsedOcrCharacter.isAmbiguous()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getAccountNumberTextWithStatus() {
+        if (hasAmbiguosDigits()) {
+            return String.format("%s AMB", getAccountNumberText());
+        }
+
         if (hasIllegalDigits()){
-            return String.format("%s ILL", accountNumberText);
+            return String.format("%s ILL", getAccountNumberText());
         }
 
         if (isChecksumValid()) {
-            return accountNumberText;
+            return getAccountNumberText();
         } else {
-            return String.format("%s ERR", accountNumberText);
+            return String.format("%s ERR", getAccountNumberText());
         }
     }
 }
