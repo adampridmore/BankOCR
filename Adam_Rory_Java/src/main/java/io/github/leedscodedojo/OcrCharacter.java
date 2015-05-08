@@ -14,7 +14,7 @@ public class OcrCharacter {
     }
 
     public ParsedOcrCharacter parse() {
-        ParsedOcrCharacter parsedCharacter = ParsedOcrCharacter.parseSingleOcrCharacter(getText());
+        ParsedOcrCharacter parsedCharacter = CharacterScanner.parseSingleOcrCharacter(getText());
 
         if (parsedCharacter.isUnknownCharacter()) {
             List<ParsedOcrCharacter> alternativeOcrCharacters = ParsedOcrCharacter.getValidAlternativeDigits(getText());
